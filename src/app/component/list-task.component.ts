@@ -38,12 +38,7 @@ export class ListTaskComponent implements OnInit, OnDestroy{
   }
 
   toggleComplete(todoId: number){
-    console.log('Toggling complete > ' + todoId);
     let foundElem = this.tasks.find((t: Task) => t.id === todoId);
-    let foundidx = this.tasks.findIndex((t: Task) => t.id === todoId);
-    console.log('Found elem:', typeof(foundElem));
-    console.log('Found elem:', foundElem?.id);
-    console.log('Found elem:', foundidx);
     const updatedTask: Task = {
           ...foundElem!,
           status: 1
@@ -53,17 +48,11 @@ export class ListTaskComponent implements OnInit, OnDestroy{
   }
 
   toggleUndo(todoId: number){
-    console.log('Toggling complete > ' + todoId);
     let foundElem = this.tasks.find((t: Task) => t.id === todoId);
-    let foundidx = this.tasks.findIndex((t: Task) => t.id === todoId);
-    console.log('Found elem:', typeof(foundElem));
-    console.log('Found elem:', foundElem?.id);
-    console.log('Found elem:', foundidx);
     const updatedTask: Task = {
           ...foundElem!,
           status: 0
         };
     this.store.dispatch(updateTask({task: updatedTask}));
-    
   }
 }

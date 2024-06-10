@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { v4 as uuidv4 } from 'uuid';
 import { Task } from '../model/task.model';
 import { Store } from '@ngrx/store';
 import { TaskState } from '../store/todo/task.reducer';
 import { addTask} from '../store/todo/task.action';
+import { AudioRecorderService } from '../services/audio-recorder.service';
 
 /**
  * npm i --save-dev @types/uuid
@@ -14,17 +15,39 @@ import { addTask} from '../store/todo/task.action';
   templateUrl: './add-task.component.html',
   styleUrl: './add-task.component.css'
 })
-export class AddTaskComponent {
+export class AddTaskComponent implements OnInit{
   form!: FormGroup;
   priorities: string[] = ['Low', 'Medium' , 'High']; 
   editMode: boolean = false;
   editElemIdx : number = 0;
+  isRecording = false;
+  audioURL: string | null = null;
+  @ViewChild('audioPlayer') audioPlayer!: ElementRef<HTMLAudioElement>;
 
-  constructor(private fb: FormBuilder, private store: Store<TaskState>){
+  constructor(private fb: FormBuilder, private store: Store<TaskState>,
+      private audioRecordingService: AudioRecorderService, private cd: ChangeDetectorRef){
     this.form = this.fb.group({
       task: ['', [Validators.required, Validators.minLength(3)]],
       priority: ['', Validators.required]
     })
+  }
+
+  ngOnInit(): void {
+       this.audioRecordingService.audioBlob$.subscribe(blob => {
+        this.audioURL = window.URL.createObjectURL(blob);
+        this.audioPlayer.nativeElement.src = this.audioURL;
+        this.cd.detectChanges();
+      });
+  }
+
+  startRecording() {
+    this.isRecording = true;
+    this.audioRecordingService.startRecording();
+  }
+
+  stopRecording() {
+    this.isRecording = false;
+    this.audioRecordingService.stopRecording();
   }
 
   addTodo(){

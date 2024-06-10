@@ -1,5 +1,5 @@
 <!-- list of todos-->
-<div>
+<div class="list-container">
     <mat-divider></mat-divider>
     <mat-list>
         <mat-list-item *ngFor="let todo of tasks">
@@ -9,6 +9,9 @@
             &nbsp;
             <button mat-icon-button (click)="edit(todo)">
                 <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="delete(todo)">
+                <mat-icon>delete</mat-icon>
             </button>
         </mat-list-item>
     </mat-list>

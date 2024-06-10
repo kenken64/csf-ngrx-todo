@@ -37,6 +37,10 @@ export class ListTaskComponent implements OnInit, OnDestroy{
     this.editTodo.emit(todo);
   }
 
+  delete(todo: Task){
+    console.log("delete task");
+  }
+
   toggleComplete(todoId: number){
     let foundElem = this.tasks.find((t: Task) => t.id === todoId);
     const updatedTask: Task = {

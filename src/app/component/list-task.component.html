@@ -1,0 +1,15 @@
+<!-- list of todos-->
+<div>
+    <mat-divider></mat-divider>
+    <mat-list>
+        <mat-list-item *ngFor="let todo of tasks">
+            <mat-checkbox *ngIf="todo.status== 0" (change)="toggleComplete(todo.id)" >{{todo.description}}</mat-checkbox>
+            <mat-checkbox *ngIf="todo.status== 1" (change)="toggleUndo(todo.id)" [checked]="todo.status == 1"
+            ><p class="strikethrough">{{todo.description}}</p></mat-checkbox>
+            &nbsp;
+            <button mat-icon-button (click)="edit(todo)">
+                <mat-icon>edit</mat-icon>
+            </button>
+        </mat-list-item>
+    </mat-list>
+</div>

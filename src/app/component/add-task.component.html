@@ -1,0 +1,26 @@
+<mat-toolbar color="primary">
+    <mat-toolbar-row>
+        <span>Todo App</span>
+    </mat-toolbar-row>
+</mat-toolbar>
+
+<div class="content">
+    <form [formGroup]="form" (ngSubmit)="addTodo()">
+        <mat-divider></mat-divider>
+        <mat-form-field>
+            <mat-label>Task: </mat-label>
+            <input matInput placeholder="Add Todo" formControlName="task">
+        </mat-form-field>
+        <div>
+            <mat-label>Priority: </mat-label>
+            <mat-radio-group arial-label="Select an Option" formControlName="priority">
+                <mat-radio-button *ngFor="let p of priorities" value="{{p}}">{{p}}</mat-radio-button> 
+            </mat-radio-group>
+        </div>
+        <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="6px">
+            <button mat-raised-button color="primary" *ngIf="!editMode" type="submit">Add</button>
+            <button mat-raised-button color="primary" *ngIf="editMode" type="button" (click)="updateTodo()">Update</button>
+            <button mat-raised-button color="primary" *ngIf="editMode" type="button" (click)="cancelUpdateTodo()">Cancel</button>
+        </div>
+    </form>
+</div>

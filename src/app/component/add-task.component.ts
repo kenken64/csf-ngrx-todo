@@ -6,6 +6,7 @@ import { Store } from '@ngrx/store';
 import { TaskState } from '../store/todo/task.reducer';
 import { addTask} from '../store/todo/task.action';
 import { AudioRecorderService } from '../services/audio-recorder.service';
+import { FileuploadService } from '../services/fileupload.service';
 
 /**
  * npm i --save-dev @types/uuid
@@ -22,10 +23,12 @@ export class AddTaskComponent implements OnInit{
   editElemIdx : number = 0;
   isRecording = false;
   audioURL: string | null = null;
+  audioBlob!: Blob;
   @ViewChild('audioPlayer') audioPlayer!: ElementRef<HTMLAudioElement>;
-
+  
   constructor(private fb: FormBuilder, private store: Store<TaskState>,
-      private audioRecordingService: AudioRecorderService, private cd: ChangeDetectorRef){
+      private audioRecordingService: AudioRecorderService, 
+      private cd: ChangeDetectorRef, private fileuploadSvc: FileuploadService){
     this.form = this.fb.group({
       task: ['', [Validators.required, Validators.minLength(3)]],
       priority: ['', Validators.required]
@@ -34,8 +37,10 @@ export class AddTaskComponent implements OnInit{
 
   ngOnInit(): void {
        this.audioRecordingService.audioBlob$.subscribe(blob => {
+        this.audioBlob = blob;
         this.audioURL = window.URL.createObjectURL(blob);
-        this.audioPlayer.nativeElement.src = this.audioURL;
+        console.log(this.audioURL);
+        this.audioPlayer.nativeElement.src = this.audioURL!;
         this.cd.detectChanges();
       });
   }
@@ -54,19 +59,21 @@ export class AddTaskComponent implements OnInit{
     console.log('Add todo');
     let desc = this.form.get('task')?.value;
     let priority = this.form.get('priority')?.value;
-    let taskId = uuidv4();
-    console.log(taskId);
-    console.log(desc);
+    
     const task: Task = {
       id: Math.floor(Math.random() * 100),
       title: desc,
       description: desc,
       priorty: priority,
+      audiofile: this.audioBlob,
       status: 0
     };
     console.log('Adding new task');
     
     this.store.dispatch(addTask({task}));
+    this.fileuploadSvc.upload(this.form.value, this.audioBlob).then((res) => {
+      console.log('File uploaded successfully');
+    });
   }
 
   updateTodo(){
@@ -92,4 +99,15 @@ export class AddTaskComponent implements OnInit{
 
   //   this.editMode = true;
   // }
+
+  dataURItoBlob(dataURI: String){
+    var byteString = atob(dataURI.split(',')[1]);
+    let mimeString = dataURI.split(',')[0].split(';')[0];
+    var ab = new ArrayBuffer(byteString.length)
+    var ia = new Uint8Array(ab)
+    for(var i =0; i <byteString.length; i++){
+      ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], {type: mimeString});
+  }
 }

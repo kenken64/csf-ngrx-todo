@@ -4,4 +4,6 @@ export interface Task {
     description: string;
     priorty: string;
     status: number;
+    audiofile?: Blob;
+    audiourl?: string;
 }

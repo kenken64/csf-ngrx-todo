@@ -3,13 +3,17 @@ import { BrowserModule, provideClientHydration } from '@angular/platform-browser
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { StoreModule, provideStore } from '@ngrx/store';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
 import { taskReducer } from './store/todo/task.reducer';
 import { AddTaskComponent } from './component/add-task.component';
 import { ListTaskComponent } from './component/list-task.component';
 import { MaterialModule } from './material.module';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { TodoEffects } from './store/todo/todo.effects';
+import { HttpClientModule } from '@angular/common/http';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -19,10 +23,13 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
   imports: [
     BrowserModule,
     AppRoutingModule,
-    StoreModule.forRoot({tasks: taskReducer}),
     MaterialModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    EffectsModule.forRoot([TodoEffects]),
+    StoreModule.forRoot({tasks: taskReducer}),
+    EffectsModule.forRoot([]),
+    HttpClientModule,
   ],
   providers: [
     provideClientHydration(),

@@ -12,19 +12,21 @@
                 <mat-radio-button *ngFor="let p of priorities" value="{{p}}">{{p}}</mat-radio-button> 
             </mat-radio-group>
         </div>
-        <div>
+        <div class="audiorec-container">
             <button title="Click here to start recording action" class="btn-mic w-auto" (click)="startRecording()"
             *ngIf="!isRecording" style="margin-right: 3px;">
-            <img src="../../assets/mic.png" />
+            <img class="rounded" width="40" height="40" src="../../assets/mic.png" />
             </button>
             <button title="Click here to stop recording" class="btn-stop w-auto" (click)="stopRecording()" *ngIf="isRecording"
             style="margin-right: 3px;">
-            <img src="../../assets/stop.png" />
+            <img class="rounded" width="40" height="40" src="../../assets/stop.png" />
             </button>
-        </div>
+        
         <audio #audioPlayer controls style="margin: 10px;"></audio>
+        <br>
         <a *ngIf="audioURL" [href]="audioURL" download="recorded_audio.wav">Download last reecorded Audio</a>
-         <div class="button-container">
+        </div>
+        <div class="button-container">
             <button mat-raised-button color="primary" *ngIf="!editMode" type="submit">Add</button>
             <button mat-raised-button color="primary" *ngIf="editMode" type="button" (click)="updateTodo()">Update</button>
             <button mat-raised-button color="primary" *ngIf="editMode" type="button" (click)="cancelUpdateTodo()">Cancel</button>

@@ -5,3 +5,5 @@ export const addTask = createAction('[Task] Add Task', props<{ task: Task }>());
 export const updateTask = createAction('[Task] Update Task', props<{ task: Task }>());
 export const deleteTask = createAction('[Task] Delete Task', props<{ id: number }>());
 export const loadTasks = createAction('[Task] load Tasks');
+export const loadTasksSuccess = createAction('[Task] load Tasks', props<{ tasks: Task[] }>());
+export const loadTasksFailure = createAction('[Task] load Tasks', props<{ tasks: Task[] }>());

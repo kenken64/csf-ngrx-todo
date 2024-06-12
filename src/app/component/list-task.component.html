@@ -2,13 +2,13 @@
 <div class="list-container">
     <mat-divider></mat-divider>
     <mat-list>
-        <mat-list-item *ngFor="let todo of (tasks$ | async)">
+        <mat-list-item *ngFor="let todo of tasks$">
             <div class="audio-container">
                 <mat-checkbox *ngIf="todo.status== 0" (change)="toggleComplete(todo.id!)" >{{todo.description}}</mat-checkbox>
                 <mat-checkbox *ngIf="todo.status== 1" (change)="toggleUndo(todo.id!)" [checked]="todo.status == 1"
                 ><p class="strikethrough">{{todo.description}}</p></mat-checkbox>
                 &nbsp;
-                <audio src="data:audio/wav;base64,{{todo.audiofile}}" controls></audio>
+                <audio src="{{todo.audiofile}}" controls></audio>
                 
                 <button mat-icon-button (click)="edit(todo)">
                     <mat-icon>edit</mat-icon>

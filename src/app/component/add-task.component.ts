@@ -1,10 +1,12 @@
-import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { v4 as uuidv4 } from 'uuid';
 import { Task } from '../model/task.model';
 import { Store } from '@ngrx/store';
 import { AudioRecorderService } from '../services/audio-recorder.service';
 import { FileuploadService } from '../services/fileupload.service';
+import { TodoService } from '../services/todo.service';
+import { TaskStore } from '../store/todo/todo.store';
 
 /**
  * npm i --save-dev @types/uuid
@@ -23,9 +25,12 @@ export class AddTaskComponent implements OnInit{
   audioURL: string | null = null;
   audioBlob!: Blob;
   @ViewChild('audioPlayer') audioPlayer!: ElementRef<HTMLAudioElement>;
+  private readonly tdStore = inject(TaskStore);
+  tasks$!: Task[];
   
   constructor(private fb: FormBuilder,
-      private audioRecordingService: AudioRecorderService, 
+      private audioRecordingService: AudioRecorderService,
+      private todoService : TodoService,
       private cd: ChangeDetectorRef, private fileuploadSvc: FileuploadService){
     this.form = this.fb.group({
       task: ['', [Validators.required, Validators.minLength(3)]],
@@ -70,6 +75,17 @@ export class AddTaskComponent implements OnInit{
     
     this.fileuploadSvc.upload(this.form.value, this.audioBlob).then((res) => {
       console.log('File uploaded successfully');
+      this.refreshTodoList();
+    });
+  }
+
+  refreshTodoList(){
+    console.log("refresh todo list from the store");
+    this.todoService.getAllTodo().subscribe((tasks: Task[]) => {
+      for(let task of tasks){
+        console.log(task.id);
+        this.tdStore.saveTasks(task);
+      }
     });
   }
 

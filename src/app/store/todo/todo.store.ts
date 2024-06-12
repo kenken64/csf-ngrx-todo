@@ -33,4 +33,9 @@ export class TaskStore extends ComponentStore<TaskResultSlice>{
         newStore.tasks[idx] = task;
         return newStore;
     });
+
+    readonly getFullSavedTodos = this.select<Task[]>(
+        (currStore: TaskResultSlice) => currStore.tasks
+      )
+    
 }

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { TaskStore } from '../store/todo/todo.store';
 import { TodoService } from '../services/todo.service';
+import { timeStamp } from 'console';
 
 @Component({
   selector: 'app-list-task',
@@ -13,22 +14,33 @@ import { TodoService } from '../services/todo.service';
 export class ListTaskComponent implements OnInit, OnDestroy{
   @Output() editTodo = new EventEmitter<Task>();
   private readonly tdStore = inject(TaskStore);
-  tasks$!: Promise<Task[]>;
+  tasks$!: Task[];
+  
   constructor(private todoSvc: TodoService){
   
   }
 
   ngOnInit(): void {
-    this.tasks$ = this.todoSvc.getAllTodo();
-    this.tasks$.then((tasks: Task[]) => {
-      for(let task of tasks){
-        this.tdStore.saveTasks(task);
-      }
-    });
+
+    if(this.tasks$?.length > 0){
+      console.log("tasks already loaded")
+      this.tdStore.getFullSavedTodos.subscribe((tasks: Task[]) => {
+        this.tasks$ = tasks;
+      });
+    }else{
+      console.log("tasks not loaded")
+      this.todoSvc.getAllTodo().subscribe((tasks: Task[]) => {
+        this.tasks$ = tasks;
+        for(let task of tasks){
+          this.tdStore.saveTasks(task);
+        }
+      });
+    }
+    
   }
 
   ngOnDestroy(): void {
-    
+    //this.tasks$.subscribe().unsubscribe();
   }
 
   edit(todo: Task){

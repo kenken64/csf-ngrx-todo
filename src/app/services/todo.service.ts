@@ -16,7 +16,7 @@ export class TodoService {
     }
     
     getAllTodo() {
-        return firstValueFrom(this.httpClient.get<Task[]>('/api/v1/todo'));
+        return this.httpClient.get<Task[]>('/api/v1/todo');
     }
     
 }

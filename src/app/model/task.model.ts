@@ -7,3 +7,7 @@ export interface Task {
     audiofile?: Blob;
     audiourl?: string;
 }
+
+export interface TaskResultSlice {
+    tasks: Task[]
+}

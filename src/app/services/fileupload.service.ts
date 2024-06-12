@@ -10,12 +10,6 @@ export class FileuploadService {
 
   constructor(private httpClient: HttpClient) { }
 
-  getImage(postId: string) {
-    return firstValueFrom(
-      this.httpClient.get<UploadResult>('/api/v1/get-image/' + postId)
-    );
-  }
-
   upload(form :  any , audio: Blob){
     const formData = new FormData();
     formData.set("title", form['task']);

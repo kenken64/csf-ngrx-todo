@@ -9,3 +9,11 @@
   margin-top: 20px;
   
 }
+
+
+.audio-container {
+  display: flex;
+  flex-direction: row;
+  align-items: left;
+  
+}

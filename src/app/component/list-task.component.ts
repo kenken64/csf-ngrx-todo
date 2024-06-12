@@ -1,10 +1,9 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { Task } from '../model/task.model';
 import { Observable } from 'rxjs';
-import { loadTasks, updateTask} from '../store/todo/task.action';
-import { selectTasks } from '../store/todo/task.selector';
 import { Store } from '@ngrx/store';
-import { TaskState } from '../store/todo/task.reducer';
+import { TaskStore } from '../store/todo/todo.store';
+import { TodoService } from '../services/todo.service';
 
 @Component({
   selector: 'app-list-task',
@@ -13,24 +12,23 @@ import { TaskState } from '../store/todo/task.reducer';
 })
 export class ListTaskComponent implements OnInit, OnDestroy{
   @Output() editTodo = new EventEmitter<Task>();
-  tasks$: Observable<any>;
-  tasks: Task[] = [];
-
-  constructor(private store: Store<TaskState>){
-    this.tasks$ = this.store.select(selectTasks);
-    console.log('Tasks: ', this.tasks$);
-    this.store.dispatch(loadTasks());
+  private readonly tdStore = inject(TaskStore);
+  tasks$!: Promise<Task[]>;
+  constructor(private todoSvc: TodoService){
+  
   }
 
   ngOnInit(): void {
-    this.tasks$.subscribe(tasks => {
-      console.log('Tasks:', tasks.tasks);
-      this.tasks = tasks.tasks;
+    this.tasks$ = this.todoSvc.getAllTodo();
+    this.tasks$.then((tasks: Task[]) => {
+      for(let task of tasks){
+        this.tdStore.saveTasks(task);
+      }
     });
   }
 
   ngOnDestroy(): void {
-    this.tasks$.subscribe().unsubscribe();
+    
   }
 
   edit(todo: Task){
@@ -42,21 +40,21 @@ export class ListTaskComponent implements OnInit, OnDestroy{
   }
 
   toggleComplete(todoId: number){
-    let foundElem = this.tasks.find((t: Task) => t.id === todoId);
-    const updatedTask: Task = {
-          ...foundElem!,
-          status: 1
-        };
-    this.store.dispatch(updateTask({task: updatedTask}));
+    // let foundElem = this.tasks.find((t: Task) => t.id === todoId);
+    // const updatedTask: Task = {
+    //       ...foundElem!,
+    //       status: 1
+    //     };
+    // this.store.dispatch(updateTask({task: updatedTask}));
     
   }
 
   toggleUndo(todoId: number){
-    let foundElem = this.tasks.find((t: Task) => t.id === todoId);
-    const updatedTask: Task = {
-          ...foundElem!,
-          status: 0
-        };
-    this.store.dispatch(updateTask({task: updatedTask}));
+    // let foundElem = this.tasks.find((t: Task) => t.id === todoId);
+    // const updatedTask: Task = {
+    //       ...foundElem!,
+    //       status: 0
+    //     };
+    // this.store.dispatch(updateTask({task: updatedTask}));
   }
 }

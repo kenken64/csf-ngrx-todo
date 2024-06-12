@@ -3,8 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { v4 as uuidv4 } from 'uuid';
 import { Task } from '../model/task.model';
 import { Store } from '@ngrx/store';
-import { TaskState } from '../store/todo/task.reducer';
-import { addTask} from '../store/todo/task.action';
 import { AudioRecorderService } from '../services/audio-recorder.service';
 import { FileuploadService } from '../services/fileupload.service';
 
@@ -26,7 +24,7 @@ export class AddTaskComponent implements OnInit{
   audioBlob!: Blob;
   @ViewChild('audioPlayer') audioPlayer!: ElementRef<HTMLAudioElement>;
   
-  constructor(private fb: FormBuilder, private store: Store<TaskState>,
+  constructor(private fb: FormBuilder,
       private audioRecordingService: AudioRecorderService, 
       private cd: ChangeDetectorRef, private fileuploadSvc: FileuploadService){
     this.form = this.fb.group({
@@ -70,7 +68,6 @@ export class AddTaskComponent implements OnInit{
     };
     console.log('Adding new task');
     
-    this.store.dispatch(addTask({task}));
     this.fileuploadSvc.upload(this.form.value, this.audioBlob).then((res) => {
       console.log('File uploaded successfully');
     });

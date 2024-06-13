@@ -14,24 +14,24 @@ import { timeStamp } from 'console';
 export class ListTaskComponent implements OnInit, OnDestroy{
   @Output() editTodo = new EventEmitter<Task>();
   private readonly tdStore = inject(TaskStore);
-  tasks$!: Task[];
-  
+  tasks$!: Observable<Task[]>;
+  countTasks : Task[] = [];
+
   constructor(private todoSvc: TodoService){
   
   }
 
   ngOnInit(): void {
 
-    if(this.tasks$?.length > 0){
+    if(this.countTasks.length > 0){
       console.log("tasks already loaded")
-      this.tdStore.getFullSavedTodos.subscribe((tasks: Task[]) => {
-        this.tasks$ = tasks;
-      });
+      this.tasks$ = this.tdStore.getFullSavedTodos;
     }else{
       console.log("tasks not loaded")
+      this.tasks$ = this.todoSvc.getAllTodo();
       this.todoSvc.getAllTodo().subscribe((tasks: Task[]) => {
-        this.tasks$ = tasks;
         for(let task of tasks){
+          this.countTasks.push(task);
           this.tdStore.saveTasks(task);
         }
       });
@@ -40,7 +40,7 @@ export class ListTaskComponent implements OnInit, OnDestroy{
   }
 
   ngOnDestroy(): void {
-    //this.tasks$.subscribe().unsubscribe();
+    this.tasks$.subscribe().unsubscribe();
   }
 
   edit(todo: Task){

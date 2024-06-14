@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { Task } from '../model/task.model';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
@@ -14,33 +14,33 @@ import { timeStamp } from 'console';
 export class ListTaskComponent implements OnInit, OnDestroy{
   @Output() editTodo = new EventEmitter<Task>();
   private readonly tdStore = inject(TaskStore);
-  tasks$!: Observable<Task[]>;
-  countTasks : Task[] = [];
-
+  //tasks$!: Observable<Task[]>;
+  //countTasks : Task[] = [];
+  @Input() tasks$!: Observable<Task[]>;
   constructor(private todoSvc: TodoService){
   
   }
 
   ngOnInit(): void {
 
-    if(this.countTasks.length > 0){
-      console.log("tasks already loaded")
-      this.tasks$ = this.tdStore.getFullSavedTodos;
-    }else{
-      console.log("tasks not loaded")
-      this.tasks$ = this.todoSvc.getAllTodo();
-      this.todoSvc.getAllTodo().subscribe((tasks: Task[]) => {
-        for(let task of tasks){
-          this.countTasks.push(task);
-          this.tdStore.saveTasks(task);
-        }
-      });
-    }
+    // if(this.countTasks.length > 0){
+    //   console.log("tasks already loaded")
+    //   this.tasks$ = this.tdStore.getFullSavedTodos;
+    // }else{
+    //   console.log("tasks not loaded")
+    //   this.tasks$ = this.todoSvc.getAllTodo();
+    //   this.todoSvc.getAllTodo().subscribe((tasks: Task[]) => {
+    //     for(let task of tasks){
+    //       this.countTasks.push(task);
+    //       this.tdStore.saveTasks(task);
+    //     }
+    //   });
+    //}
     
   }
 
   ngOnDestroy(): void {
-    this.tasks$.subscribe().unsubscribe();
+    //this.tasks$.subscribe().unsubscribe();
   }
 
   edit(todo: Task){

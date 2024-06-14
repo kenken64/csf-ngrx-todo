@@ -25,17 +25,27 @@ export class AddTaskComponent implements OnInit{
   audioURL: string | null = null;
   audioBlob!: Blob;
   @ViewChild('audioPlayer') audioPlayer!: ElementRef<HTMLAudioElement>;
-  private readonly tdStore = inject(TaskStore);
+  
+  //private readonly tdStore = inject(TaskStore);
   tasks$!: Task[];
+  todoResult$ = this.tdStore.getFullSavedTodos;
   
   constructor(private fb: FormBuilder,
       private audioRecordingService: AudioRecorderService,
-      private todoService : TodoService,
-      private cd: ChangeDetectorRef, private fileuploadSvc: FileuploadService){
+      private todoService : TodoService, private tdStore: TaskStore,
+      private cd: ChangeDetectorRef, 
+      private fileuploadSvc: FileuploadService){
+
     this.form = this.fb.group({
       task: ['', [Validators.required, Validators.minLength(3)]],
       priority: ['', Validators.required]
-    })
+    });
+
+    this.todoService.getAllTodo().subscribe((tasks: Task[]) => {
+      for(let task of tasks){
+        this.tdStore.saveTasks(task);
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -75,6 +85,7 @@ export class AddTaskComponent implements OnInit{
     
     this.fileuploadSvc.upload(this.form.value, this.audioBlob).then((res) => {
       console.log('File uploaded successfully');
+      this.tdStore.resetTasks(task);
       this.refreshTodoList();
     });
   }
